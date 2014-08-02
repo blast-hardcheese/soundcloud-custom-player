@@ -148,7 +148,15 @@ class SoundCloud {
                     tracks.push(data);
                 } else if(data.creator) {
                     // it's a group!
-                    links.push({url:data.uri + '/tracks'});
+                    var link: Link = {url:data.uri + '/tracks'};
+                    forks += 1;
+                    this.loadTracksFromLink(link, function(newTracks: Track[]) {
+                        tracks = tracks.concat(newTracks);
+                        forks -= 1;
+                        if(forks == 0) {
+                            callback(tracks);
+                        }
+                    }.bind(this));
                 } else if(data.username) {
                     // if user, get his tracks or favorites
                     var link: Link = null;
