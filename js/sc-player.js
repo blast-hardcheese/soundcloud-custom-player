@@ -30,15 +30,8 @@
 
     return tc.join('.');
   };
-  // shuffle the array
-  var shuffle = function(arr) {
-    arr.sort(function() { return 1 - Math.floor(Math.random() * 3); } );
-    return arr;
-  };
 
-  var debug = true,
-      useSandBox = false,
-      $doc = $(document),
+  var $doc = $(document),
       log = function(args) {
         try {
           if(debug && window.console && window.console.log){
@@ -48,25 +41,8 @@
           // no console available
         }
       },
-      domain = useSandBox ? 'sandbox-soundcloud.com' : 'soundcloud.com',
-      secureDocument = (document.location.protocol === 'https:'),
-      // convert a SoundCloud resource URL to an API URL
-      scApiUrl = function(url, apiKey) {
-        var resolver = ( secureDocument || (/^https/i).test(url) ? 'https' : 'http') + '://api.' + domain + '/resolve?url=',
-            params = 'format=json&consumer_key=' + apiKey +'&callback=?';
-
-        // force the secure url in the secure environment
-        if( secureDocument ) {
-          url = url.replace(/^http:/, 'https:');
-        }
-
-        // check if it's already a resolved api url
-        if ( (/api\./).test(url) ) {
-          return url + '?' + params;
-        } else {
-          return resolver + url + '&' + params;
-        }
-      };
+      domain = 'soundcloud.com',
+      secureDocument = (document.location.protocol === 'https:');
 
   // TODO Expose the audio engine, so it can be unit-tested
   var audioEngine = function() {
@@ -248,55 +224,20 @@
 
 
 
-  var apiKey,
+  var apiKey = 'htuiRd1JP11Ww0X72T1C3g',
+      apiObject = new SoundCloud(apiKey),
       didAutoPlay = false,
       players = [],
       updates = {},
       currentUrl,
       loadTracksData = function($player, links, key) {
-        var index = 0,
-            playerObj = {node: $player, tracks: []},
-            loadUrl = function(link) {
-              var apiUrl = scApiUrl(link.url, apiKey);
-              $.getJSON(apiUrl, function(data) {
-                // log('data loaded', link.url, data);
-                index += 1;
-                if(data.tracks){
-                  // log('data.tracks', data.tracks);
-                  playerObj.tracks = playerObj.tracks.concat(data.tracks);
-                }else if(data.duration){
-                  // a secret link fix, till the SC API returns permalink with secret on secret response
-                  data.permalink_url = link.url;
-                  // if track, add to player
-                  playerObj.tracks.push(data);
-                }else if(data.creator){
-                  // it's a group!
-                  links.push({url:data.uri + '/tracks'});
-                }else if(data.username){
-                  // if user, get his tracks or favorites
-                  if(/favorites/.test(link.url)){
-                    links.push({url:data.uri + '/favorites'});
-                  }else{
-                    links.push({url:data.uri + '/tracks'});
-                  }
-                }else if($.isArray(data)){
-                  playerObj.tracks = playerObj.tracks.concat(data);
-                }
-                if(links[index]){
-                  // if there are more track to load, get them from the api
-                  loadUrl(links[index]);
-                }else{
-                  // if loading finishes, anounce it to the GUI
-                  playerObj.node.trigger({type:'onTrackDataLoaded', playerObj: playerObj, url: apiUrl});
-                }
-             });
-           };
-        // update current API key
-        apiKey = key;
-        // update the players queue
+        var playerObj = {node: $player, tracks: []};
+        var initialUrl = links[0].url;
         players.push(playerObj);
-        // load first tracks
-        loadUrl(links[index]);
+        apiObject.loadTracksFromLinks(links, function(tracks) {
+          playerObj.tracks = playerObj.tracks.concat(tracks);
+          playerObj.node.trigger({type:'onTrackDataLoaded', playerObj: playerObj, url: apiObject.apiUrl(initialUrl)});
+        });
       },
       artworkImage = function(track, usePlaceholder) {
         if(usePlaceholder){
@@ -517,7 +458,7 @@
           // log('onTrackDataLoaded.scPlayer', event.playerObj, playerId, event.target);
           var tracks = event.playerObj.tracks;
           if (opts.randomize) {
-            tracks = shuffle(tracks);
+            tracks = SoundCloud.shuffleArray(tracks);
           }
           // create the playlist
           $.each(tracks, function(index, track) {
