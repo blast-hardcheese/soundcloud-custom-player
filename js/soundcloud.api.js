@@ -69,7 +69,7 @@ var SoundCloud = (function () {
                         if (forks == 0) {
                             callback(tracks);
                         }
-                    }.bind(this));
+                    });
                 } else if (data.username) {
                     // if user, get his tracks or favorites
                     var link = null;
@@ -86,7 +86,7 @@ var SoundCloud = (function () {
                         if (forks == 0) {
                             callback(tracks);
                         }
-                    }.bind(this));
+                    });
                 } else if ($.isArray(data)) {
                     tracks = tracks.concat(data);
                 }
