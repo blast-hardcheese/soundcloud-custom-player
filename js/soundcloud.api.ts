@@ -176,8 +176,6 @@ class SoundCloud {
                     tracks = tracks.concat(data);
                 }
 
-                // if loading finishes, anounce it to the GUI
-                //playerObj.node.trigger({type:'onTrackDataLoaded', playerObj: playerObj, url: apiUrl});
                 forks -= 1;
                 if(forks == 0) {
                     callback(tracks);
