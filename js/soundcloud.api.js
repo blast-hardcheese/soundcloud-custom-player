@@ -2,11 +2,11 @@
 /// <reference path="../../js/definitions/rx.js/rx.all.ts" />
 
 var SoundCloud = (function () {
-    function SoundCloud(apiKey) {
+    function SoundCloud(options) {
         var _this = this;
         this.debug = true;
         this.useSandBox = false;
-        this.domain = this.useSandBox ? 'sandbox-soundcloud.com' : 'soundcloud.com';
+        this.domain = null;
         this.apiKey = null;
         this.secureDocument = true;
         this.apiUrl = function (url, apiKey) {
@@ -25,7 +25,10 @@ var SoundCloud = (function () {
                 return resolver + url + '&' + params;
             }
         };
-        this.apiKey = apiKey;
+        this.apiKey = options.apiKey;
+        this.useSandBox = options.useSandBox || false;
+
+        this.domain = this.useSandBox ? 'sandbox-soundcloud.com' : 'soundcloud.com';
     }
     // shuffle the array
     SoundCloud.shuffleArray = function (arr) {

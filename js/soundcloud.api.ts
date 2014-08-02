@@ -1,6 +1,11 @@
 /// <reference path="../../js/definitions/jquery/jquery.d.ts" />
 /// <reference path="../../js/definitions/rx.js/rx.all.ts" />
 
+interface APIOptions {
+    apiKey: string;
+    useSandBox?: boolean;
+}
+
 interface Link {
     url: string;
     title?: string;
@@ -90,7 +95,7 @@ interface Track extends SoundCloudEntity {
 class SoundCloud {
     private debug = true;
     private useSandBox = false;
-    private domain = this.useSandBox ? 'sandbox-soundcloud.com' : 'soundcloud.com';
+    private domain = null;
 
     private apiKey = null;
     private secureDocument = true;
@@ -101,8 +106,11 @@ class SoundCloud {
         return arr;
     }
 
-    constructor(apiKey: string) {
-        this.apiKey = apiKey;
+    constructor(options: APIOptions) {
+        this.apiKey = options.apiKey;
+        this.useSandBox = options.useSandBox || false;
+
+        this.domain = this.useSandBox ? 'sandbox-soundcloud.com' : 'soundcloud.com'
     }
 
     apiUrl = (url: string, apiKey: string = this.apiKey) => {
