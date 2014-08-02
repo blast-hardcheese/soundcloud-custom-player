@@ -142,8 +142,6 @@ class SoundCloud {
                     // log('data.tracks', data.tracks);
                     tracks = tracks.concat(data.tracks);
                 } else if(data.duration) {
-                    // a secret link fix, till the SC API returns permalink with secret on secret response
-                    data.permalink_url = link.url;
                     // if track, add to player
                     tracks.push(data);
                 } else if(data.creator) {
