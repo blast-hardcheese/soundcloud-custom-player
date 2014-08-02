@@ -225,7 +225,7 @@
 
 
   var apiKey = 'htuiRd1JP11Ww0X72T1C3g',
-      apiObject = new SoundCloud(apiKey),
+      apiObject = new SoundCloud({apiKey: apiKey}),
       didAutoPlay = false,
       players = [],
       updates = {},
