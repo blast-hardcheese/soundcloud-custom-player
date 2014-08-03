@@ -9,6 +9,9 @@ var SoundCloud = (function () {
         this.domain = null;
         this.apiKey = null;
         this.secureDocument = true;
+        this.cancel = function () {
+            console.debug("TODO: Cancel current attempts");
+        };
         this.apiUrl = function (url, apiKey) {
             if (typeof apiKey === "undefined") { apiKey = _this.apiKey; }
             var resolver = (_this.secureDocument || (/^https/i).test(url) ? 'https' : 'http') + '://api.' + _this.domain + '/resolve?url=', params = 'format=json&consumer_key=' + apiKey + '&callback=?';

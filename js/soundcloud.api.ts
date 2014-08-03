@@ -113,6 +113,10 @@ class SoundCloud {
         this.domain = this.useSandBox ? 'sandbox-soundcloud.com' : 'soundcloud.com'
     }
 
+    cancel = () => {
+        console.debug("TODO: Cancel current attempts");
+    }
+
     apiUrl = (url: string, apiKey: string = this.apiKey) => {
         var resolver = ( this.secureDocument || (/^https/i).test(url) ? 'https' : 'http') + '://api.' + this.domain + '/resolve?url=',
             params = 'format=json&consumer_key=' + apiKey +'&callback=?';
