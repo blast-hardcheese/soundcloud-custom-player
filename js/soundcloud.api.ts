@@ -100,6 +100,8 @@ class SoundCloud {
     private apiKey = null;
     private secureDocument = true;
 
+    private xhrs: JQueryXHR[] = [];
+
     // shuffle the array
     static shuffleArray<T>(arr: T[]): T[] {
         arr.sort(function() { return 1 - Math.floor(Math.random() * 3); } );
@@ -113,8 +115,10 @@ class SoundCloud {
         this.domain = this.useSandBox ? 'sandbox-soundcloud.com' : 'soundcloud.com'
     }
 
-    cancel = () => {
-        console.debug("TODO: Cancel current attempts");
+    abort = () => {
+        this.xhrs.map(function(xhr) {
+            xhr.abort();
+        });
     }
 
     apiUrl = (url: string, apiKey: string = this.apiKey) => {
@@ -148,7 +152,7 @@ class SoundCloud {
             var apiUrl = this.apiUrl(link.url);
 
             forks += 1;
-            $.getJSON(apiUrl, function(data: any) {
+            var xhr: JQueryXHR = $.getJSON(apiUrl, function(data: any) {
                 // log('data loaded', link.url, data);
                 if(data.tracks) {
                     // log('data.tracks', data.tracks);
@@ -193,6 +197,15 @@ class SoundCloud {
                     callback(tracks);
                 }
             }.bind(this));
+
+            xhr.always(() => {
+                var idx = this.xhrs.indexOf(xhr);
+                if(idx !== -1) {
+                    this.xhrs.splice(idx, 1);
+                }
+            });
+
+            this.xhrs.push(xhr);
         }
 
         if(forks == 0) {

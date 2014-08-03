@@ -9,8 +9,11 @@ var SoundCloud = (function () {
         this.domain = null;
         this.apiKey = null;
         this.secureDocument = true;
-        this.cancel = function () {
-            console.debug("TODO: Cancel current attempts");
+        this.xhrs = [];
+        this.abort = function () {
+            _this.xhrs.map(function (xhr) {
+                xhr.abort();
+            });
         };
         this.apiUrl = function (url, apiKey) {
             if (typeof apiKey === "undefined") { apiKey = _this.apiKey; }
@@ -47,6 +50,7 @@ var SoundCloud = (function () {
     };
 
     SoundCloud.prototype.loadTracksFromLinks = function (links, callback, tracks) {
+        var _this = this;
         if (typeof tracks === "undefined") { tracks = []; }
         var tracks = [];
 
@@ -57,7 +61,7 @@ var SoundCloud = (function () {
             var apiUrl = this.apiUrl(link.url);
 
             forks += 1;
-            $.getJSON(apiUrl, function (data) {
+            var xhr = $.getJSON(apiUrl, function (data) {
                 // log('data loaded', link.url, data);
                 if (data.tracks) {
                     // log('data.tracks', data.tracks);
@@ -102,6 +106,15 @@ var SoundCloud = (function () {
                     callback(tracks);
                 }
             }.bind(this));
+
+            xhr.always(function () {
+                var idx = _this.xhrs.indexOf(xhr);
+                if (idx !== -1) {
+                    _this.xhrs.splice(idx, 1);
+                }
+            });
+
+            this.xhrs.push(xhr);
         }
 
         if (forks == 0) {
