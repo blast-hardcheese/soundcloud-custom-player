@@ -17,7 +17,7 @@ var SoundCloud = (function () {
         };
         this.apiUrl = function (url, apiKey) {
             if (typeof apiKey === "undefined") { apiKey = _this.apiKey; }
-            var resolver = (_this.secureDocument || (/^https/i).test(url) ? 'https' : 'http') + '://api.' + _this.domain + '/resolve?url=', params = 'format=json&consumer_key=' + apiKey + '&callback=?';
+            var resolver = (_this.secureDocument || (/^https/i).test(url) ? 'https' : 'http') + '://api.' + _this.domain + '/resolve?url=', params = 'format=json&consumer_key=' + apiKey;
 
             // force the secure url in the secure environment
             if (_this.secureDocument) {

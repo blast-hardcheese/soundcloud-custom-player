@@ -123,7 +123,7 @@ class SoundCloud {
 
     apiUrl = (url: string, apiKey: string = this.apiKey) => {
         var resolver = ( this.secureDocument || (/^https/i).test(url) ? 'https' : 'http') + '://api.' + this.domain + '/resolve?url=',
-            params = 'format=json&consumer_key=' + apiKey +'&callback=?';
+            params = 'format=json&consumer_key=' + apiKey;
 
         // force the secure url in the secure environment
         if( this.secureDocument ) {
