@@ -112,7 +112,7 @@ class SoundCloud {
         this.apiKey = options.apiKey;
         this.useSandBox = options.useSandBox || false;
 
-        this.domain = this.useSandBox ? 'sandbox-soundcloud.com' : 'soundcloud.com'
+        this.domain = this.useSandBox ? 'sandbox-soundcloud.com' : 'soundcloud.com';
     }
 
     abort = () => {
